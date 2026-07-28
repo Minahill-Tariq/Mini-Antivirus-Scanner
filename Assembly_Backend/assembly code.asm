@@ -1,17 +1,10 @@
 INCLUDE Irvine32.inc
-
 .data
 
-; =========================
-; TITLE STRINGS
-; =========================
 line    BYTE "========================================",0
 heading BYTE "     MINI ANTIVIRUS SCANNER             ",0
 welcome BYTE "   WELCOME TO CYBER SECURITY PROJECT    ",0
 
-; =========================
-; LOGIN
-; =========================
 userPrompt   BYTE "Enter Username: ",0
 passPrompt   BYTE "Enter Password: ",0
 loginSuccess BYTE "Login Successful!",0
@@ -21,9 +14,6 @@ correctPass  BYTE "1234",0
 userInput    BYTE 30 DUP(0)
 passInput    BYTE 30 DUP(0)
 
-; =========================
-; MENU
-; =========================
 menu1        BYTE "1. Quick Scan",0
 menu2        BYTE "2. Full Scan",0
 menu3        BYTE "3. Custom Scan (enter your own files)",0
@@ -33,9 +23,6 @@ menu6        BYTE "6. Exit",0
 choicePrompt BYTE "Enter Choice: ",0
 choice       DWORD ?
 
-; =========================
-; BUILT-IN FILE NAMES
-; =========================
 file1 BYTE "safe.txt",0
 file2 BYTE "virus.exe",0
 file3 BYTE "project.doc",0
@@ -59,18 +46,12 @@ files DWORD OFFSET file1, OFFSET file2, OFFSET file3, OFFSET file4
 fileCount  DWORD 8
 maxFiles   DWORD 13
 
-; =========================
-; ADD FILES
-; =========================
 addHowMany  BYTE "How many files to add? (max 5): ",0
 addPrompt   BYTE "Enter filename to add: ",0
 addedMsg    BYTE "File added to scanner!",0
 listFullMsg BYTE "File list is full! Cannot add more.",0
 extraCount  DWORD 0
 
-; =========================
-; CUSTOM SCAN
-; =========================
 howManyPrompt BYTE "How many files to scan? (max 5): ",0
 filePrompt    BYTE "Enter filename: ",0
 customFile1   BYTE 50 DUP(0)
@@ -85,17 +66,11 @@ customFiles DWORD OFFSET customFile1, OFFSET customFile2
 
 customCount DWORD 0
 
-; =========================
-; KEYWORDS
-; =========================
 virusWord   BYTE "virus",0
 hackWord    BYTE "hack",0
 malwareWord BYTE "malware",0
 trojanWord  BYTE "trojan",0
 
-; =========================
-; MESSAGES
-; =========================
 scanMsg         BYTE "Scanning Files...",0
 safeMsg         BYTE "  --> SAFE FILE",0
 threatMsg       BYTE "  --> THREAT DETECTED",0
@@ -109,16 +84,11 @@ highMsg         BYTE "Threat Level  : HIGH",0
 quarantineTitle BYTE "===== QUARANTINED FILES =====",0
 noQuarantine    BYTE "(No files quarantined yet)",0
 
-; =========================
-; COUNTERS
-; =========================
 filesScanned DWORD 0
 threatCount  DWORD 0
 safeCount    DWORD 0
 
-; =========================
-; QUARANTINE - 20 slots
-; =========================
+
 quarantine1  BYTE 50 DUP(0)
 quarantine2  BYTE 50 DUP(0)
 quarantine3  BYTE 50 DUP(0)
@@ -157,9 +127,6 @@ savedFileName   DWORD 0
 
 .code
 
-; =====================================================
-; STRING COMPARE  ESI=str1  EDI=str2  EAX=1 if equal
-; =====================================================
 MyStrCompare PROC
 CmpLoop:
     mov al, [esi]
@@ -179,9 +146,6 @@ CmpNo:
     ret
 MyStrCompare ENDP
 
-; =====================================================
-; CONTAINS WORD  ESI=haystack  EDI=needle  EAX=1/0
-; =====================================================
 ContainsWord PROC
 CW_Outer:
     mov bl, [esi]
@@ -212,9 +176,6 @@ CW_No:
     ret
 ContainsWord ENDP
 
-; =====================================================
-; COPY STRING  ESI=src  EDI=dst
-; =====================================================
 MyCopy PROC
 CP_Loop:
     mov al, [esi]
@@ -228,9 +189,6 @@ CP_Done:
     ret
 MyCopy ENDP
 
-; =====================================================
-; MAIN
-; =====================================================
 main PROC
 
     call Clrscr
@@ -313,9 +271,6 @@ MainMenu:
     je  ExitProgram
     jmp MainMenu
 
-; =====================================================
-; QUICK SCAN
-; =====================================================
 QuickScan:
     call ResetCounters
     call Crlf
@@ -347,9 +302,6 @@ QLoop:
     call ShowReport
     jmp MainMenu
 
-; =====================================================
-; FULL SCAN
-; =====================================================
 FullScan:
     call ResetCounters
     call Crlf
@@ -392,9 +344,6 @@ FNext:
     call ShowReport
     jmp MainMenu
 
-; =====================================================
-; CUSTOM SCAN
-; =====================================================
 CustomScan:
     call ResetCounters
     call Crlf
@@ -466,9 +415,6 @@ CScanLoop:
     call ShowReport
     jmp MainMenu
 
-; =====================================================
-; ADD FILES TO SCANNER
-; =====================================================
 AddFiles:
     call Crlf
 
@@ -551,9 +497,6 @@ ClrAdd:
 
     jmp MainMenu
 
-; =====================================================
-; VIEW QUARANTINE
-; =====================================================
 ViewQuarantine:
     call Crlf
 
@@ -600,9 +543,6 @@ QListLoop:
     call SetTextColor
     jmp MainMenu
 
-; =====================================================
-; EXIT
-; =====================================================
 ExitProgram:
     mov eax, (0 * 16) + 15
     call SetTextColor
@@ -610,9 +550,6 @@ ExitProgram:
 
 main ENDP
 
-; =====================================================
-; LOGIN
-; =====================================================
 LoginSystem PROC
 TryAgain:
     mov ecx, 30
@@ -678,9 +615,6 @@ BadLogin:
 
 LoginSystem ENDP
 
-; =====================================================
-; DETECT THREAT
-; =====================================================
 DetectThreat PROC
     inc filesScanned
     mov savedFileName, edx
@@ -781,9 +715,6 @@ Lv3:
 
 DetectThreat ENDP
 
-; =====================================================
-; SHOW REPORT
-; =====================================================
 ShowReport PROC
     call Crlf
 
@@ -822,10 +753,6 @@ ShowReport PROC
     ret
 ShowReport ENDP
 
-; =====================================================
-; RESET COUNTERS
-; only resets scan stats - quarantineCount stays!
-; =====================================================
 ResetCounters PROC
     mov filesScanned, 0
     mov threatCount,  0
