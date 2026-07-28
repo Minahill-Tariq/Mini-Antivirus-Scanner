@@ -1,5 +1,3 @@
-# Mini-Antivirus-Scanner
-A two-layer cybersecurity tool with an x86 Assembly backend and Python Tkinter GUI.
 # Mini Antivirus Scanner
 
 A dual-layer cybersecurity application demonstrating threat detection mechanics at both the machine instruction level (x86 Assembly) and through an interactive desktop interface (Python Tkinter).
