@@ -2,9 +2,6 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import os
 
-# =========================
-# SUSPICIOUS PATTERNS
-# =========================
 SUSPICIOUS_STRINGS = [
     "powershell", "cmd.exe", "regedit", "keylog",
     "shellcode", "WScript", "AutoRun", "CreateRemote",
@@ -20,9 +17,6 @@ SUSPICIOUS_FILENAMES = [
 
 SUSPICIOUS_EXTENSIONS = [".exe", ".bat", ".vbs", ".cmd", ".ps1", ".scr"]
 
-# =========================
-# COLORS
-# =========================
 BG        = "#0a0a0a"
 PANEL     = "#111111"
 BORDER    = "#1e1e1e"
@@ -35,24 +29,19 @@ GRAY      = "#888888"
 DARK_RED  = "#1a0000"
 DARK_GREEN= "#001a0a"
 
-# =========================
-# SCAN FUNCTION
-# =========================
 def scan_file(filepath):
     filename = os.path.basename(filepath).lower()
     ext      = os.path.splitext(filepath)[1].lower()
     threats  = []
 
-    # check filename
+
     for kw in SUSPICIOUS_FILENAMES:
         if kw in filename:
             threats.append(f"Suspicious filename keyword: '{kw}'")
 
-    # check extension
     if ext in SUSPICIOUS_EXTENSIONS:
         threats.append(f"Dangerous file extension: '{ext}'")
 
-    # read file content
     try:
         with open(filepath, "rb") as f:
             raw = f.read(2000)
@@ -78,16 +67,10 @@ def scan_file(filepath):
     else:
         return "SAFE", None, []
 
-# =========================
-# AUTH WINDOW  (NEW)
-# shows 1=Login / 2=Sign Up before the scanner
-# =========================
 class AuthWindow:
     def __init__(self, root, on_success):
         self.root       = root
         self.on_success = on_success
-
-        # stored signup credentials (empty until user signs up)
         self.signup_user = None
         self.signup_pass = None
 
@@ -98,7 +81,7 @@ class AuthWindow:
 
         self.build_auth_menu()
 
-    # ---- AUTH CHOICE SCREEN ----
+
     def build_auth_menu(self):
         self._clear()
 
@@ -131,8 +114,6 @@ class AuthWindow:
                   activebackground=CYAN, activeforeground=BG,
                   bd=0, cursor="hand2", pady=8,
                   command=self.build_signup).pack(fill="x", padx=20, pady=(0, 20))
-
-    # ---- LOGIN SCREEN ----
     def build_login(self):
         self._clear()
         self.attempts = 0
@@ -196,13 +177,12 @@ class AuthWindow:
         u = self.user_entry.get().strip()
         p = self.pass_entry.get().strip()
 
-        # check hardcoded credentials
+   
         if u == "minahil" and p == "1234":
             self.msg_label.config(text="Access Granted!", fg=GREEN)
             self.root.after(800, self.on_success)
             return
 
-        # check signup credentials if a signup was done
         if self.signup_user and u == self.signup_user and p == self.signup_pass:
             self.msg_label.config(text="Access Granted!", fg=GREEN)
             self.root.after(800, self.on_success)
@@ -214,7 +194,7 @@ class AuthWindow:
             fg=RED)
         self.pass_entry.delete(0, "end")
 
-    # ---- SIGNUP SCREEN ----
+    
     def build_signup(self):
         self._clear()
 
@@ -276,32 +256,21 @@ class AuthWindow:
     def attempt_signup(self):
         u = self.new_user_entry.get().strip()
         p = self.new_pass_entry.get().strip()
-
-        # validation: username cannot be empty
         if not u:
             self.signup_msg.config(text="Username cannot be empty!", fg=RED)
             return
 
-        # validation: password cannot be empty
         if not p:
             self.signup_msg.config(text="Password cannot be empty!", fg=RED)
             return
-
-        # store credentials and redirect to login
         self.signup_user = u
         self.signup_pass = p
         self.signup_msg.config(text="Account created! Please login now.", fg=GREEN)
         self.root.after(1200, self.build_login)
-
-    # ---- HELPER ----
     def _clear(self):
         for widget in self.root.winfo_children():
             widget.destroy()
 
-
-# =========================
-# MAIN SCANNER WINDOW
-# =========================
 class ScannerWindow:
     def __init__(self, root):
         self.root        = root
@@ -318,7 +287,7 @@ class ScannerWindow:
         self.build()
 
     def build(self):
-        # ---- TOP TITLE ----
+
         top = tk.Frame(self.root, bg=BG)
         top.pack(fill="x", padx=20, pady=(16,0))
 
@@ -329,15 +298,14 @@ class ScannerWindow:
         tk.Label(top, text="========================================",
                  fg=CYAN, bg=BG, font=("Courier", 12)).pack()
 
-        # ---- MAIN LAYOUT ----
         body = tk.Frame(self.root, bg=BG)
         body.pack(fill="both", expand=True, padx=20, pady=12)
 
-        # LEFT PANEL
+  
         left = tk.Frame(body, bg=BG)
         left.pack(side="left", fill="both", expand=True)
 
-        # scan buttons
+
         btn_frame = tk.Frame(left, bg=PANEL,
                              highlightbackground=BORDER,
                              highlightthickness=1)
@@ -379,7 +347,7 @@ class ScannerWindow:
                        command=self.browse_folder)
         b3.pack(fill="x", padx=16, pady=(4,14))
 
-        # results box
+
         res_label = tk.Label(left, text="SCAN RESULTS",
                              fg=CYAN, bg=BG,
                              font=("Courier", 11, "bold"),
@@ -401,7 +369,6 @@ class ScannerWindow:
         scroll.pack(side="right", fill="y")
         self.results_text.pack(fill="both", expand=True, padx=8, pady=8)
 
-        # color tags
         self.results_text.tag_config("safe",    foreground=GREEN)
         self.results_text.tag_config("threat",  foreground=RED)
         self.results_text.tag_config("warn",    foreground=YELLOW)
@@ -409,12 +376,10 @@ class ScannerWindow:
         self.results_text.tag_config("gray",    foreground=GRAY)
         self.results_text.tag_config("white",   foreground=WHITE)
 
-        # RIGHT PANEL
         right = tk.Frame(body, bg=BG, width=240)
         right.pack(side="right", fill="y", padx=(14,0))
         right.pack_propagate(False)
 
-        # report card
         report = tk.Frame(right, bg=PANEL,
                           highlightbackground=BORDER,
                           highlightthickness=1)
@@ -448,8 +413,6 @@ class ScannerWindow:
                   activeforeground=WHITE,
                   bd=0, cursor="hand2",
                   command=self.clear_all).pack(pady=(0,10))
-
-        # quarantine box
         tk.Label(right, text="QUARANTINE",
                  fg=RED, bg=BG,
                  font=("Courier", 11, "bold"),
@@ -469,15 +432,12 @@ class ScannerWindow:
         qs.pack(side="right", fill="y")
         self.q_text.pack(fill="both", expand=True, padx=6, pady=6)
 
-        # bottom status bar
         self.status = tk.Label(self.root,
                                text="Ready. Choose a scan option above.",
                                fg=GRAY, bg=BORDER,
                                font=("Courier", 9),
                                anchor="w")
         self.status.pack(fill="x", side="bottom", ipady=4, padx=8)
-
-    # ---- SCAN ACTIONS ----
     def browse_single(self):
         path = filedialog.askopenfilename(
             title="Select a file to scan",
@@ -541,8 +501,6 @@ class ScannerWindow:
         self.set_status(
             f"Scan complete. {self.total_scanned} scanned, "
             f"{self.total_threats} threats, {self.total_safe} safe.")
-
-    # ---- UI HELPERS ----
     def write_result(self, text, tag="white"):
         self.results_text.configure(state="normal")
         self.results_text.insert("end", text, tag)
@@ -582,9 +540,6 @@ class ScannerWindow:
         self.update_report()
         self.set_status("Cleared. Ready for new scan.")
 
-# =========================
-# APP ENTRY POINT
-# =========================
 def launch_scanner():
     for widget in root.winfo_children():
         widget.destroy()
