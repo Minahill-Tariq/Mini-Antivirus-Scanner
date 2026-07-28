@@ -110,7 +110,6 @@ quarantine18 BYTE 50 DUP(0)
 quarantine19 BYTE 50 DUP(0)
 quarantine20 BYTE 50 DUP(0)
 
-; *** FIX: split into multiple DWORD lines (max 4 per line) ***
 quarantineSlots DWORD OFFSET quarantine1,  OFFSET quarantine2
                 DWORD OFFSET quarantine3,  OFFSET quarantine4
                 DWORD OFFSET quarantine5,  OFFSET quarantine6
